@@ -197,8 +197,9 @@
                 </div>
                 <button id="submit-btn" class="btn mt-6 w-full text-black" style="background-color: #f6bc3f;">Enviar Pergunta</button>
             `;
+            const playerNumber = Object.keys(gameState.players).findIndex(id => id === userId) + 1;
             document.getElementById('ai-btn').onclick = () => {
-                document.getElementById('input-text').value = "se pudesse falar com animais?";
+                document.getElementById('input-text').value = `P${playerNumber} Autoral`;
             };
             document.getElementById('submit-btn').onclick = () => {
                 const input = document.getElementById('input-text').value.trim();
@@ -216,8 +217,8 @@
              gameContent.innerHTML = `
                 <h2 class="font-heading text-2xl text-center text-gray-700 mb-6">Rodada ${gameState.round} - Você Responde!</h2>
                 <div class="bg-gray-50 p-6 rounded-2xl border">
-                    <p class="font-bold text-gray-800">Pergunta para você:</p>
-                    <p class="text-xl mt-2 font-heading text-slate-900">O que você faria ${escape(me.assignedQuestion)}</p>
+                    <p class="font-bold text-gray-800">Pergunta para você (P${me.assignedQuestion.authorIndex + 1} Autoral):</p>
+                    <p class="text-xl mt-2 font-heading text-slate-900">O que você faria ${escape(me.assignedQuestion.text)}</p>
                 </div>
                  <div class="mt-4">
                     <textarea id="input-text" class="w-full p-4 border-2 border-gray-200 rounded-xl mt-2 text-base focus:ring-2 focus:ring-teal-400 transition-all" rows="3" placeholder="Capricha na resposta..."></textarea>
@@ -225,8 +226,9 @@
                 </div>
                 <button id="submit-btn" class="btn mt-6 w-full text-white" style="background-color: #0cc0df;">Enviar Resposta</button>
             `;
+             const playerNumber = Object.keys(gameState.players).findIndex(id => id === userId) + 1;
             document.getElementById('ai-btn').onclick = () => {
-                 document.getElementById('input-text').value = "Construiria um império de tradutores de esquilos.";
+                 document.getElementById('input-text').value = `R${playerNumber}`;
             };
             document.getElementById('submit-btn').onclick = () => {
                 const input = document.getElementById('input-text').value.trim();
@@ -367,9 +369,7 @@
             }
             if (!gameState.status) {
                 userId = 'user_host';
-                gameState = {
-                    status: 'lobby', hostId: userId, round: 0, players: {}, questions: {}, answers: {}, pairs: [], roundWinners: []
-                };
+                gameState = { status: 'lobby', hostId: userId, round: 0, players: {}, roundWinners: [] };
                 addPlayer(false, userId, name);
             } else {
                 addPlayer(false, `user_${Object.keys(gameState.players).length}`, name);
@@ -396,6 +396,9 @@
                 avatar: isBot ? '🤖' : avatars[playerCount % avatars.length],
                 score: 0,
                 submitted: false,
+                originalQuestion: '',
+                assignedQuestion: {},
+                writtenAnswer: ''
             };
             render();
         };
@@ -408,14 +411,14 @@
         };
         
         const submitQuestion = (question) => {
+            gameState.players[userId].originalQuestion = question;
             gameState.players[userId].submitted = true;
-            gameState.questions[userId] = question;
             checkAllSubmitted();
         };
 
         const submitAnswer = (answer) => {
+            gameState.players[userId].writtenAnswer = answer;
             gameState.players[userId].submitted = true;
-            gameState.answers[userId] = answer;
             checkAllSubmitted();
         };
         
@@ -433,11 +436,13 @@
         };
 
         const checkAllSubmitted = () => {
-            Object.entries(gameState.players).forEach(([pid, p]) => {
+            const playerIds = Object.keys(gameState.players);
+            playerIds.forEach((pid, index) => {
+                const p = gameState.players[pid];
                 if (pid.startsWith('bot') && !p.submitted) {
                     p.submitted = true;
-                    if(gameState.status === 'asking') gameState.questions[pid] = "se fosse um robô?";
-                    if(gameState.status === 'answering') gameState.answers[pid] = "Bip Bop. Eu calcularia a resposta ótima.";
+                    if(gameState.status === 'asking') p.originalQuestion = `P${index + 1} Autoral`;
+                    if(gameState.status === 'answering') p.writtenAnswer = `R${index + 1}`;
                     if(gameState.status === 'voting') {
                         const validPairs = gameState.pairs.filter(pair => pair.answererId !== pid);
                         if (validPairs.length > 0) validPairs[Math.floor(Math.random() * validPairs.length)].votes++;
@@ -464,18 +469,28 @@
                 playerIds.forEach((pid, i) => {
                     let qid = questionerIds[i];
                     if(pid === qid) { qid = questionerIds[(i + 1) % playerIds.length]; }
-                    gameState.players[pid].assignedQuestion = gameState.questions[qid];
+                    const authorIndex = playerIds.findIndex(id => id === qid);
+                    gameState.players[pid].assignedQuestion = {
+                        text: gameState.players[qid].originalQuestion,
+                        authorId: qid,
+                        authorIndex: authorIndex
+                    };
                 });
                 gameState.status = 'answering';
 
             } else if (gameState.status === 'answering') {
                  gameState.pairs = [];
                  const playerIds = Object.keys(gameState.players);
-                 playerIds.forEach(pid => {
-                     const question = gameState.players[pid].assignedQuestion;
-                     const questionerId = Object.keys(gameState.questions).find(key => gameState.questions[key] === question);
-                     const answer = gameState.answers[pid];
-                     gameState.pairs.push({ question, answer, questionerId, answererId: pid, votes: 0, comments: [] });
+                 const answererIds = [...playerIds.slice(1), playerIds[0]];
+                 
+                 playerIds.forEach((pid, i) => {
+                     const question = gameState.players[pid].assignedQuestion.text; // P(i) Recebida
+                     const originalQuestionAuthorId = gameState.players[pid].assignedQuestion.authorId;
+                     
+                     const answererId = answererIds[i]; // R(i+1)
+                     const answer = gameState.players[answererId].writtenAnswer;
+
+                     gameState.pairs.push({ question, answer, questionerId: originalQuestionAuthorId, answererId, votes: 0, comments: [] });
                  });
                 gameState.status = 'voting';
 
@@ -496,9 +511,12 @@
             } else {
                 gameState.round++;
                 gameState.status = 'asking';
-                Object.values(gameState.players).forEach(p => p.submitted = false);
-                gameState.questions = {};
-                gameState.answers = {};
+                Object.values(gameState.players).forEach(p => {
+                    p.submitted = false;
+                    p.originalQuestion = '';
+                    p.assignedQuestion = {};
+                    p.writtenAnswer = '';
+                });
                 gameState.pairs = [];
             }
             render();
@@ -530,3 +548,4 @@
     </script>
 </body>
 </html>
+
