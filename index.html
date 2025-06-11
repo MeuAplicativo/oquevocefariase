@@ -64,19 +64,7 @@
             };
 
             const createGame = () => {
-                showScreen('ad');
-                let timer = 3;
-                const timerSpan = document.getElementById('ad-timer');
-                if (!timerSpan) return;
-                timerSpan.textContent = timer;
-                const interval = setInterval(() => {
-                    timer--;
-                    timerSpan.textContent = timer;
-                    if (timer <= 0) {
-                        clearInterval(interval);
-                        showScreen('name');
-                    }
-                }, 1000);
+                showScreen('name');
             };
 
             const joinGame = async (name) => {
@@ -161,24 +149,16 @@
             };
 
             const initialize = () => {
-                window.setTimeout(() => {
-                    const btnCreate = document.getElementById('create-game-btn');
-                    const btnSubmit = document.getElementById('submit-name-btn');
-                    const btnLeaveLobby = document.getElementById('lobby-leave-btn');
-                    const btnLeaveGame = document.getElementById('game-leave-btn');
-                    const btnInvitePlayer = document.getElementById('invite-player-btn');
-                    const btnInviteVisitor = document.getElementById('invite-visitor-btn');
+                const btnCreate = document.getElementById('create-game-btn');
+                const btnSubmit = document.getElementById('submit-name-btn');
 
-                    if (btnCreate) btnCreate.addEventListener('click', createGame);
-                    if (btnSubmit) btnSubmit.addEventListener('click', () => joinGame(document.getElementById('player-name-input')?.value));
-                    if (btnLeaveLobby) btnLeaveLobby.addEventListener('click', () => window.location.reload());
-                    if (btnLeaveGame) btnLeaveGame.addEventListener('click', () => window.location.reload());
-                    if (btnInvitePlayer) btnInvitePlayer.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
-                    if (btnInviteVisitor) btnInviteVisitor.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
+                if (btnCreate) btnCreate.addEventListener('click', createGame);
+                if (btnSubmit) btnSubmit.addEventListener('click', () => {
+                    const input = document.getElementById('player-name-input');
+                    if (input) joinGame(input.value);
+                });
 
-                    showScreen('home');
-                    lucide.createIcons();
-                }, 0);
+                showScreen('home');
             };
 
             initialize();
@@ -202,8 +182,24 @@
         }
     </style>
 </head>
-<body class="bg-[#f0f9ff] flex items-center justify-center min-h-screen p-4">
-    <!-- O restante do HTML permanece igual -->
+<body class="bg-[#f0f9ff] min-h-screen p-4">
+    <div id="screen-home" class="text-center">
+        <h1 class="text-2xl font-bold mb-4">O que você faria se...?</h1>
+        <button id="create-game-btn" class="btn">Criar nova partida</button>
+    </div>
+
+    <div id="screen-name" class="hidden text-center">
+        <h2 class="text-xl font-medium mb-2">Qual é o seu nome?</h2>
+        <input id="player-name-input" class="border rounded p-2 mb-2" type="text" placeholder="Seu nome" />
+        <br>
+        <button id="submit-name-btn" class="btn">Entrar</button>
+    </div>
+
+    <div id="screen-lobby" class="hidden">
+        <h2 class="text-xl font-medium mb-2">Lobby da Partida</h2>
+        <p>Jogadores conectados: <span id="player-count">0</span></p>
+        <ul id="player-list" class="mt-4 space-y-2"></ul>
+    </div>
 </body>
 </html>
 
