@@ -42,8 +42,9 @@
   <div class="card w-full max-w-md mx-auto mt-10">
     <h1 class="font-heading text-2xl mb-4 text-center">O que você faria se...?</h1>
     <div id="lobby" class="space-y-4">
-      <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-4">Criar nova partida</button>
-      <input id="inputCode" type="text" placeholder="Código da partida" class="w-full border border-gray-300 rounded-xl p-2 mb-4" />
+      <input id="inputName" type="text" placeholder="Seu nome" class="w-full border border-gray-300 rounded-xl p-2 mb-2" maxlength="20" />
+      <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-2">Criar nova partida</button>
+      <input id="inputCode" type="text" placeholder="Código da partida" class="w-full border border-gray-300 rounded-xl p-2 mb-2" />
       <button id="btnJoin" class="btn transition-all w-full bg-green-500 text-white">Entrar na partida</button>
     </div>
     <div id="game" class="hidden space-y-4">
@@ -78,30 +79,19 @@
     let currentGameId;
     let playerName = '';
 
-    // Função para pedir nome ao usuário
-    async function askPlayerName() {
-      let name = '';
-      while (!name) {
-        name = prompt('Digite seu nome para entrar na partida:');
-        if (name) name = name.trim();
-      }
-      playerName = name;
-      return name;
-    }
-
-    // Gerar ID simples
-    function generateGameId() {
-      return Math.random().toString(36).substr(2, 6).toUpperCase();
-    }
-
     // DOM elements
     const btnCreate = document.getElementById('btnCreate');
     const btnJoin = document.getElementById('btnJoin');
+    const inputName = document.getElementById('inputName');
     const inputCode = document.getElementById('inputCode');
     const lobby = document.getElementById('lobby');
     const gameDiv = document.getElementById('game');
     const gameIdSpan = document.getElementById('gameId');
     const playersDiv = document.getElementById('players');
+
+    function generateGameId() {
+      return Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
 
     // Função para entrar/mostrar partida
     function enterGame(id) {
@@ -133,7 +123,8 @@
 
     // Criar nova partida
     btnCreate.addEventListener('click', async () => {
-      const name = await askPlayerName();
+      const name = inputName.value.trim();
+      if (!name) return alert('Digite seu nome para criar a partida');
       const id = generateGameId();
       const gameRef = doc(db, 'partidas', id);
       await setDoc(gameRef, { players: [name], createdAt: Date.now() });
@@ -143,9 +134,10 @@
 
     // Entrar em uma partida existente
     btnJoin.addEventListener('click', async () => {
+      const name = inputName.value.trim();
       const id = inputCode.value.trim().toUpperCase();
+      if (!name) return alert('Digite seu nome para entrar na partida');
       if (!id) return alert('Informe o código da partida');
-      const name = await askPlayerName();
       const gameRef = doc(db, 'partidas', id);
       const snap = await getDoc(gameRef);
       if (!snap.exists()) return alert('Partida não encontrada');
@@ -181,6 +173,3 @@
   </script>
 </body>
 </html>
-
-
-
