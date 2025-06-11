@@ -161,22 +161,24 @@
             };
 
             const initialize = () => {
-                const btnCreate = document.getElementById('create-game-btn');
-                const btnSubmit = document.getElementById('submit-name-btn');
-                const btnLeaveLobby = document.getElementById('lobby-leave-btn');
-                const btnLeaveGame = document.getElementById('game-leave-btn');
-                const btnInvitePlayer = document.getElementById('invite-player-btn');
-                const btnInviteVisitor = document.getElementById('invite-visitor-btn');
+                window.setTimeout(() => {
+                    const btnCreate = document.getElementById('create-game-btn');
+                    const btnSubmit = document.getElementById('submit-name-btn');
+                    const btnLeaveLobby = document.getElementById('lobby-leave-btn');
+                    const btnLeaveGame = document.getElementById('game-leave-btn');
+                    const btnInvitePlayer = document.getElementById('invite-player-btn');
+                    const btnInviteVisitor = document.getElementById('invite-visitor-btn');
 
-                if (btnCreate) btnCreate.addEventListener('click', createGame);
-                if (btnSubmit) btnSubmit.addEventListener('click', () => joinGame(document.getElementById('player-name-input')?.value));
-                if (btnLeaveLobby) btnLeaveLobby.addEventListener('click', () => window.location.reload());
-                if (btnLeaveGame) btnLeaveGame.addEventListener('click', () => window.location.reload());
-                if (btnInvitePlayer) btnInvitePlayer.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
-                if (btnInviteVisitor) btnInviteVisitor.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
+                    if (btnCreate) btnCreate.addEventListener('click', createGame);
+                    if (btnSubmit) btnSubmit.addEventListener('click', () => joinGame(document.getElementById('player-name-input')?.value));
+                    if (btnLeaveLobby) btnLeaveLobby.addEventListener('click', () => window.location.reload());
+                    if (btnLeaveGame) btnLeaveGame.addEventListener('click', () => window.location.reload());
+                    if (btnInvitePlayer) btnInvitePlayer.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
+                    if (btnInviteVisitor) btnInviteVisitor.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
 
-                showScreen('home');
-                lucide.createIcons();
+                    showScreen('home');
+                    lucide.createIcons();
+                }, 0);
             };
 
             initialize();
@@ -204,3 +206,4 @@
     <!-- O restante do HTML permanece igual -->
 </body>
 </html>
+
