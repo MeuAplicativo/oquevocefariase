@@ -39,13 +39,14 @@
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
-  <div class="card w-full max-w-md mx-auto mt-10">
+  <div class="w-full max-w-md mx-auto mt-10">
     <h1 class="font-heading text-2xl mb-4 text-center">O que você faria se...?</h1>
-    <div id="lobby" class="space-y-4">
-      <input id="inputName" type="text" placeholder="Seu nome" class="w-full border border-gray-300 rounded-xl p-2 mb-2" maxlength="20" />
-      <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-2">Criar nova partida</button>
-      <input id="inputCode" type="text" placeholder="Código da partida" class="w-full border border-gray-300 rounded-xl p-2 mb-2" />
-      <button id="btnJoin" class="btn transition-all w-full bg-green-500 text-white">Entrar na partida</button>
+    <div id="lobby" class="space-y-4 text-center">
+  <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-2">Criar nova partida</button>
+  <button id="btnJoin" class="btn transition-all w-full bg-green-500 text-white">Entrar na partida</button>
+  <!-- Aqui aparecerão os inputs dinamicamente -->
+  <div id="inputsArea"></div>
+</div>
     </div>
     <div id="game" class="hidden space-y-4">
       <h2 class="text-xl font-semibold">Partida: <span id="gameId"></span></h2>
@@ -173,3 +174,4 @@
   </script>
 </body>
 </html>
+
