@@ -1,551 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O que você faria se...? (Online)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@0.378.0"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background-color: #f0f9ff; /* Light sky blue background */
-        }
-        .font-heading { font-weight: 800; }
-        .transition-all { transition: all 0.2s ease-in-out; }
-        .hidden { display: none; }
-        .card {
-            background-color: white;
-            border-radius: 1.25rem; /* 20px */
-            padding: 2rem; /* 32px */
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-            border: 1px solid #f3f4f6;
-        }
-        .btn {
-            font-weight: 500;
-            padding-top: 0.85rem;
-            padding-bottom: 0.85rem;
-            border-radius: 0.75rem;
-            transition: all 0.2s ease-in-out;
-            border: none;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O que você faria se...? (Online)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@0.378.0"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f9ff;
+    }
+    .font-heading { font-weight: 800; }
+    .transition-all { transition: all 0.2s ease-in-out; }
+    .hidden { display: none; }
+    .card {
+      background-color: white;
+      border-radius: 1.25rem;
+      padding: 2rem;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      border: 1px solid #f3f4f6;
+    }
+    .btn {
+      font-weight: 500;
+      padding-top: 0.85rem;
+      padding-bottom: 0.85rem;
+      border-radius: 0.75rem;
+      transition: all 0.2s ease-in-out;
+      border: none;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+  </style>
 </head>
 <body class="bg-[#f0f9ff] flex items-center justify-center min-h-screen p-4">
 
-    <div id="app-container" class="w-full max-w-3xl mx-auto">
-        <!-- Screen: Home -->
-        <main id="screen-home" class="card text-center">
-            <h1 class="font-heading flex items-center justify-center gap-3">
-                <span class="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400" style="color: #f6bc3f;">O que você faria se...?</span>
-                <span class="text-4xl">🤔</span>
-            </h1>
-            <p class="text-gray-500 mt-4 mb-8 text-base">Crie uma partida e convide seus amigos para um jogo de criatividade!</p>
-            <button id="create-game-btn" class="btn w-full text-white" style="background-color: #0cc0df; hover:filter: brightness(110%);">
-                Criar Nova Partida
-            </button>
-        </main>
+  <div id="app-container" class="w-full max-w-3xl mx-auto">
+    <main id="screen-home" class="card text-center">
+      <h1 class="font-heading flex items-center justify-center gap-3">
+        <span class="text-3xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400" style="color: #f6bc3f;">O que você faria se...?</span>
+        <span class="text-4xl">🤔</span>
+      </h1>
+      <p class="text-gray-500 mt-4 mb-8 text-base">Crie uma partida e convide seus amigos para um jogo de criatividade!</p>
+      <button id="create-game-btn" class="btn w-full text-white" style="background-color: #0cc0df; hover:filter: brightness(110%);">
+        Criar Nova Partida
+      </button>
+    </main>
+  </div>
 
-        <!-- Screen: Ad Placeholder -->
-        <main id="screen-ad" class="hidden card text-center">
-            <h2 class="font-heading text-3xl text-gray-700 mb-4">Apoie o Jogo!</h2>
-            <div class="bg-gray-100 p-6 rounded-2xl">
-                <p class="mb-4 text-gray-600">Para criar uma partida, assista um rápido anúncio.</p>
-                <p class="text-sm mt-4 text-gray-500">Aguarde <span id="ad-timer">3</span> segundos...</p>
-            </div>
-        </main>
+  <!-- Toast de Notificação -->
+  <div id="notification-toast" class="hidden fixed bottom-5 right-5 bg-gray-900 text-white py-3 px-5 rounded-xl shadow-2xl z-50">
+    <p id="notification-message"></p>
+  </div>
 
-        <!-- Screen: Enter Name -->
-        <main id="screen-name" class="hidden card text-center">
-            <h2 id="name-screen-title" class="font-heading text-3xl text-gray-700 mb-6">Qual é o seu nome?</h2>
-            <input type="text" id="player-name-input" class="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all" placeholder="Digite seu nome ou apelido" maxlength="20">
-            <button id="submit-name-btn" class="btn mt-6 w-full text-white" style="background-color: #0cc0df;">Entrar no Jogo</button>
-        </main>
+  <script type="module">
+    // Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
 
-        <!-- Screen: Lobby -->
-        <main id="screen-lobby" class="hidden card">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="font-heading text-3xl text-gray-700">Lobby da Partida</h2>
-                <button id="lobby-leave-btn" class="text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
-            </div>
-            <div class="mb-6">
-                <h3 class="font-bold text-gray-600 mb-2">Jogadores (<span id="player-count">0</span>/8):</h3>
-                <ul id="player-list" class="bg-gray-50 p-2 rounded-xl divide-y divide-gray-100"></ul>
-            </div>
-            <div id="host-actions" class="space-y-3"></div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 border-t pt-6 mt-6">
-                <button id="invite-player-btn" class="btn text-white flex items-center justify-center gap-2" style="background-color: #25d366;"><i data-lucide="share-2"></i> Convidar Jogador</button>
-                <button id="invite-visitor-btn" class="btn text-white flex items-center justify-center gap-2" style="background-color: #0a94ab;"><i data-lucide="eye"></i> Convidar Visitante</button>
-            </div>
-            <p id="start-game-condition" class="text-center text-sm text-gray-500 mt-4">É necessário ter pelo menos 3 jogadores para começar.</p>
-        </main>
-        
-        <!-- Screen: Game -->
-        <main id="screen-game" class="hidden card relative">
-            <button id="game-leave-btn" class="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
-            <div id="game-content"></div>
-        </main>
-    </div>
-    
-    <!-- Notification Toast -->
-    <div id="notification-toast" class="hidden fixed bottom-5 right-5 bg-gray-900 text-white py-3 px-5 rounded-xl shadow-2xl z-50">
-        <p id="notification-message"></p>
-    </div>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCDQyr5jmFHj1I7zh8yI2ToTMGyAmJQyuw",
+      authDomain: "o-que-voce-faria-se.firebaseapp.com",
+      projectId: "o-que-voce-faria-se",
+      storageBucket: "o-que-voce-faria-se.appspot.com",
+      messagingSenderId: "549107390137",
+      appId: "1:549107390137:web:afec0d9f6202f36babad68",
+      measurementId: "G-52VGEP1F3Y"
+    };
 
-    <script type="module">
-        const firebaseConfig = {
-            apiKey: "", 
-            authDomain: "",
-            projectId: "",
-        };
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const analytics = getAnalytics(app);
 
-        const IS_ONLINE_MODE = firebaseConfig && firebaseConfig.apiKey;
-        let userId;
-        let gameState = {};
-        
-        const screens = {
-            home: document.getElementById('screen-home'),
-            ad: document.getElementById('screen-ad'),
-            name: document.getElementById('screen-name'),
-            lobby: document.getElementById('screen-lobby'),
-            game: document.getElementById('screen-game'),
-        };
+    // --- Jogo ---
+    const showNotification = (msg) => {
+      const toast = document.getElementById('notification-toast');
+      document.getElementById('notification-message').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    };
 
-        const showScreen = (screenName) => {
-            Object.values(screens).forEach(s => s.classList.add('hidden'));
-            if(screens[screenName]) screens[screenName].classList.remove('hidden');
-        };
+    const createGame = async () => {
+      const gameId = `game_${Date.now()}`;
+      const gameData = {
+        status: 'lobby',
+        hostId: gameId + '_host',
+        players: {},
+        createdAt: new Date().toISOString()
+      };
+      await setDoc(doc(db, "games", gameId), gameData);
+      localStorage.setItem("gameId", gameId);
+      localStorage.setItem("userId", gameData.hostId);
+      showNotification("Partida criada com sucesso!");
+      // redirecionar ou mudar tela...
+    };
 
-        const showNotification = (message) => {
-            const toast = document.getElementById('notification-toast');
-            document.getElementById('notification-message').textContent = message;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        };
-        
-        const escape = (str) => String(str).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-        const render = () => {
-            if (!gameState.status) return;
-
-            if (gameState.status === 'lobby') {
-                showScreen('lobby');
-                renderLobby();
-            } else {
-                showScreen('game');
-                switch (gameState.status) {
-                    case 'asking': renderAsking(); break;
-                    case 'answering': renderAnswering(); break;
-                    case 'voting': renderVoting(); break;
-                    case 'results': renderResults(); break;
-                    case 'final': renderFinal(); break;
-                }
-            }
-            lucide.createIcons();
-        };
-
-        const renderLobby = () => {
-            const { players, hostId } = gameState;
-            document.getElementById('player-count').textContent = Object.keys(players).length;
-            const playerList = document.getElementById('player-list');
-            playerList.innerHTML = '';
-            Object.entries(players).forEach(([pid, p]) => {
-                const isHost = pid === hostId;
-                let kickButton = '';
-                if (userId === hostId && !isHost) {
-                    kickButton = `<button onclick="window.kickPlayer('${pid}')" class="text-red-400 hover:text-red-600 transition-colors"><i data-lucide="trash-2"></i></button>`;
-                }
-                playerList.innerHTML += `<li class="flex items-center justify-between p-3 rounded-lg">
-                                            <span class="font-medium">${p.avatar} ${escape(p.name)} ${isHost ? ' (Host) 👑' : ''}</span> 
-                                            ${kickButton}
-                                         </li>`;
-            });
-            
-            const hostActionsDiv = document.getElementById('host-actions');
-            if (userId === hostId) {
-                const canStart = Object.keys(players).length >= 3;
-                hostActionsDiv.innerHTML = `
-                    <button id="add-bot-btn" class="btn w-full text-black" style="background-color: #f6bc3f;">Adicionar Jogador Simulado</button>
-                    <button id="start-game-btn" class="btn w-full text-white mt-2 ${!canStart ? 'opacity-50 cursor-not-allowed' : ''}" style="background-color: #0cc0df;" ${!canStart ? 'disabled' : ''}>Iniciar Partida</button>
-                `;
-                document.getElementById('add-bot-btn').onclick = () => addPlayer(true);
-                document.getElementById('start-game-btn').onclick = startGame;
-            } else {
-                hostActionsDiv.innerHTML = `<p class="text-center font-semibold text-gray-500 animate-pulse">Aguardando o Host iniciar a partida...</p>`;
-            }
-        };
-
-        const renderAsking = () => {
-            const gameContent = document.getElementById('game-content');
-            const me = gameState.players[userId];
-            if (me.submitted) {
-                gameContent.innerHTML = `<div class="text-center p-6"><p class="text-gray-500 animate-pulse">Aguardando outros jogadores...</p></div>`;
-                return;
-            }
-            gameContent.innerHTML = `
-                <h2 class="font-heading text-2xl text-center text-gray-700 mb-6">Rodada ${gameState.round} - Você Pergunta!</h2>
-                <div class="bg-gray-50 p-6 rounded-2xl border">
-                    <label class="font-bold text-gray-800">O que você faria...</label>
-                    <textarea id="input-text" class="w-full p-4 border-2 border-gray-200 rounded-xl mt-2 text-base focus:ring-2 focus:ring-slate-400 transition-all" rows="3" placeholder="...se ganhasse na loteria?"></textarea>
-                    <button id="ai-btn" class="text-sm text-slate-500 hover:text-slate-700 font-semibold mt-2 flex items-center gap-1"><i data-lucide="sparkles" class="w-4 h-4"></i>Gerar com IA</button>
-                </div>
-                <button id="submit-btn" class="btn mt-6 w-full text-black" style="background-color: #f6bc3f;">Enviar Pergunta</button>
-            `;
-            const playerNumber = Object.keys(gameState.players).findIndex(id => id === userId) + 1;
-            document.getElementById('ai-btn').onclick = () => {
-                document.getElementById('input-text').value = `P${playerNumber} Autoral`;
-            };
-            document.getElementById('submit-btn').onclick = () => {
-                const input = document.getElementById('input-text').value.trim();
-                if (input) submitQuestion(input);
-            };
-        };
-        
-        const renderAnswering = () => {
-            const gameContent = document.getElementById('game-content');
-            const me = gameState.players[userId];
-            if (me.submitted) {
-                gameContent.innerHTML = `<div class="text-center p-6"><p class="text-gray-500 animate-pulse">Aguardando outros jogadores...</p></div>`;
-                return;
-            }
-             gameContent.innerHTML = `
-                <h2 class="font-heading text-2xl text-center text-gray-700 mb-6">Rodada ${gameState.round} - Você Responde!</h2>
-                <div class="bg-gray-50 p-6 rounded-2xl border">
-                    <p class="font-bold text-gray-800">Pergunta para você (P${me.assignedQuestion.authorIndex + 1} Autoral):</p>
-                    <p class="text-xl mt-2 font-heading text-slate-900">O que você faria ${escape(me.assignedQuestion.text)}</p>
-                </div>
-                 <div class="mt-4">
-                    <textarea id="input-text" class="w-full p-4 border-2 border-gray-200 rounded-xl mt-2 text-base focus:ring-2 focus:ring-teal-400 transition-all" rows="3" placeholder="Capricha na resposta..."></textarea>
-                    <button id="ai-btn" class="text-sm text-teal-600 hover:text-teal-800 font-semibold mt-2 flex items-center gap-1"><i data-lucide="sparkles" class="w-4 h-4"></i>Gerar com IA</button>
-                </div>
-                <button id="submit-btn" class="btn mt-6 w-full text-white" style="background-color: #0cc0df;">Enviar Resposta</button>
-            `;
-             const playerNumber = Object.keys(gameState.players).findIndex(id => id === userId) + 1;
-            document.getElementById('ai-btn').onclick = () => {
-                 document.getElementById('input-text').value = `R${playerNumber}`;
-            };
-            document.getElementById('submit-btn').onclick = () => {
-                const input = document.getElementById('input-text').value.trim();
-                if (input) submitAnswer(input);
-            };
-        };
-
-        const renderVoting = () => {
-            const gameContent = document.getElementById('game-content');
-            const me = gameState.players[userId];
-            if (me.submitted) {
-                gameContent.innerHTML = `<div class="text-center p-6"><p class="text-gray-500 animate-pulse">Aguardando outros jogadores...</p></div>`;
-                return;
-            }
-            
-            let cardsHtml = gameState.pairs.map((pair, index) => {
-                const canVote = pair.answererId !== userId;
-                return `
-                    <div class="bg-white p-6 rounded-2xl border shadow-lg transition-all hover:shadow-xl hover:border-slate-200">
-                        <p class="text-lg font-bold text-gray-800">...${escape(pair.question)}</p>
-                        <p class="text-lg text-teal-700 bg-teal-50 p-4 rounded-xl mt-2">"${escape(pair.answer)}"</p>
-                        <div class="mt-4 pt-4 border-t">
-                            <input id="comment-${index}" type="text" class="w-full p-3 border-2 border-gray-200 rounded-xl text-sm" placeholder="Adicione um comentário...">
-                            <div class="flex justify-end mt-2">
-                                <button onclick="window.castVote(${index})" class="btn text-white flex items-center justify-center gap-2 px-4 ${!canVote ? 'opacity-50 cursor-not-allowed' : ''}" style="background-color: #9e3fb9;" ${!canVote ? 'disabled' : ''}>
-                                    <i data-lucide="heart"></i> Votar (${pair.votes})
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            gameContent.innerHTML = `
-                <h2 class="font-heading text-3xl text-center text-gray-700 mb-6">Rodada ${gameState.round} - Votação!</h2>
-                <div class="space-y-6">${cardsHtml}</div>`;
-        };
-        
-        const renderResults = () => {
-            const gameContent = document.getElementById('game-content');
-            const winner = gameState.pairs.reduce((a, b) => a.votes > b.votes ? a : b);
-            const questioner = gameState.players[winner.questionerId];
-            const answerer = gameState.players[winner.answererId];
-            const textToShare = `Olha que dupla criativa no "O que você faria...?":\n\n*P: ...${winner.question}*\n*R: "${winner.answer}"*\n\n(Por: ${questioner.name} e ${answerer.name})\n\nJogue você também!`;
-
-            gameContent.innerHTML = `
-                <div class="text-center">
-                    <h2 class="font-heading text-3xl mb-4" style="color: #f6bc3f;">🏆 Destaques da Rodada</h2>
-                    <div class="p-6 rounded-2xl" style="background-color: #fef3c7; color: #92400e;">
-                        <p class="text-base">Com ${winner.votes} votos, a dupla vencedora é:</p>
-                        <p class="text-2xl font-heading mt-2">${escape(questioner.name)} & ${escape(answerer.name)}</p>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl border mt-6 text-left shadow-md">
-                        <p class="font-bold text-gray-500 text-sm">Pergunta (de ${escape(questioner.name)}):</p>
-                        <p class="mb-3 text-base text-gray-800">...${escape(winner.question)}</p>
-                        <p class="font-bold text-gray-500 text-sm">Resposta (de ${escape(answerer.name)}):</p>
-                        <p class="text-base text-gray-800">"${escape(winner.answer)}"</p>
-                        ${winner.comments.length > 0 ? `<p class="font-bold mt-4 border-t pt-3 text-gray-500 text-sm">Comentários:</p><p class="text-sm italic text-gray-600">"${winner.comments.join('", "')}"</p>` : ''}
-                        <div class="flex justify-end mt-4">
-                            <button onclick="window.shareOnWhatsApp('${textToShare}')" class="btn text-white text-sm flex items-center justify-center gap-2 px-4" style="background-color: #25d366;">
-                                <i data-lucide="message-circle"></i> Compartilhar no WhatsApp
-                            </button>
-                        </div>
-                    </div>
-
-                    <button id="next-btn" class="btn mt-8 w-full text-white" style="background-color: #0cc0df;">${gameState.round >= 3 ? 'Ver Placar Final' : 'Próxima Rodada'}</button>
-                </div>`;
-            document.getElementById('next-btn').onclick = nextRound;
-        };
-        
-        const renderFinal = () => {
-             const gameContent = document.getElementById('game-content');
-             const sortedPlayers = Object.values(gameState.players).sort((a,b) => b.score - a.score);
-             const scoreboard = sortedPlayers.map((p, i) => {
-                const medals = ['bg-amber-300 text-amber-800', 'bg-slate-300 text-slate-800', 'bg-orange-300 text-orange-800'];
-                return `<div class="flex items-center p-4 rounded-xl shadow-md ${medals[i] || 'bg-white'}">
-                            <span class="text-2xl w-10">${['🥇', '🥈', '🥉'][i] || '🏅'}</span>
-                            <span class="text-base font-bold flex-1">${escape(p.name)}</span>
-                            <span class="text-base font-bold">${p.score} pontos</span>
-                        </div>`;
-             }).join('');
-             
-             const winnersHtml = gameState.roundWinners.map(w => {
-                const questionerName = gameState.players[w.questionerId].name;
-                const answererName = gameState.players[w.answererId].name;
-                const whatsappText = encodeURIComponent(`Olha que dupla criativa no "O que você faria se...?":\n\n*P: ...${w.question}*\n*R: "${w.answer}"*\n\n(Por: ${questionerName} e ${answererName})\n\nJogue você também!`);
-                return `<div class="bg-yellow-50 border rounded-lg p-4">
-                            <p class="font-bold text-slate-700">Rodada ${w.round}</p>
-                            <p class="mt-2 text-sm text-gray-800"><span class="font-semibold">P:</span> ...${escape(w.question)} (por ${escape(questionerName)})</p>
-                            <p class="mt-1 text-sm text-gray-800"><span class="font-semibold">R:</span> "${escape(w.answer)}" (por ${escape(answererName)})</p>
-                            <div class="text-right mt-3">
-                                <a href="https://wa.me/?text=${whatsappText}" target="_blank" class="btn text-white inline-flex items-center gap-2 text-xs px-3 py-1.5" style="background-color: #25d366;">
-                                    <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
-                                </a>
-                            </div>
-                        </div>`;
-             }).join('');
-
-             gameContent.innerHTML = `
-                <h2 class="font-heading text-3xl text-center text-gray-700 mb-6">Fim de Jogo!</h2>
-                <div class="space-y-3">${scoreboard}</div>
-                
-                <h3 class="font-heading text-2xl text-center text-gray-700 my-8">Resumo das Rodadas</h3>
-                <div class="space-y-4 mb-8">${winnersHtml}</div>
-
-                <div class="my-10 pt-8 border-t text-center text-sm text-gray-500">
-                    <h3 class="font-heading text-xl text-gray-800 mb-3">Obrigado por jogar!</h3>
-                    <p class="font-semibold">@oquevocefariase.com.br</p>
-                    <p>www.oquevocefariase.com.br</p>
-                    <p>WhatsApp: (81) 99999-9999</p>
-                </div>
-
-                <button onclick="window.location.reload()" class="btn w-full text-white" style="background-color: #0cc0df;">Jogar Novamente</button>
-             `;
-        };
-        
-        // --- Lógica do Jogo (State Machine) ---
-        const createGame = () => {
-            showScreen('ad');
-            let timer = 3;
-            const timerSpan = document.getElementById('ad-timer');
-            timerSpan.textContent = timer;
-            const interval = setInterval(() => {
-                timer--;
-                timerSpan.textContent = timer;
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    showScreen('name');
-                }
-            }, 1000);
-        };
-        
-        const joinGame = (name) => {
-            if (!name) {
-                showNotification("Por favor, digite um nome.");
-                return;
-            }
-            if (!gameState.status) {
-                userId = 'user_host';
-                gameState = { status: 'lobby', hostId: userId, round: 0, players: {}, roundWinners: [] };
-                addPlayer(false, userId, name);
-            } else {
-                addPlayer(false, `user_${Object.keys(gameState.players).length}`, name);
-            }
-        };
-        
-        window.kickPlayer = (pid) => {
-            delete gameState.players[pid];
-            render();
-        };
-
-        const addPlayer = (isBot, id = null, name = null) => {
-            const playerCount = Object.keys(gameState.players).length;
-            if(playerCount >= 8) {
-                showNotification("Lobby está cheio!");
-                return;
-            }
-            const newId = id || (isBot ? `bot_${playerCount}` : `user_${playerCount}`);
-            const newName = name || (isBot ? `Simulado ${playerCount+1}` : `Jogador ${playerCount+1}`);
-            const avatars = ['🥳', '👽', '👻', '🤖', '🐶', '🦜', '🦸', '🤵'];
-            
-            gameState.players[newId] = {
-                name: newName,
-                avatar: isBot ? '🤖' : avatars[playerCount % avatars.length],
-                score: 0,
-                submitted: false,
-                originalQuestion: '',
-                assignedQuestion: {},
-                writtenAnswer: ''
-            };
-            render();
-        };
-
-        const startGame = () => {
-            gameState.status = 'asking';
-            gameState.round = 1;
-            Object.values(gameState.players).forEach(p => p.submitted = false);
-            render();
-        };
-        
-        const submitQuestion = (question) => {
-            gameState.players[userId].originalQuestion = question;
-            gameState.players[userId].submitted = true;
-            checkAllSubmitted();
-        };
-
-        const submitAnswer = (answer) => {
-            gameState.players[userId].writtenAnswer = answer;
-            gameState.players[userId].submitted = true;
-            checkAllSubmitted();
-        };
-        
-        window.castVote = (pairIndex) => {
-            const comment = document.getElementById(`comment-${pairIndex}`).value.trim();
-            if(comment) {
-                if(!gameState.pairs[pairIndex].comments) gameState.pairs[pairIndex].comments = [];
-                gameState.pairs[pairIndex].comments.push(comment);
-                showNotification("Comentário adicionado!");
-            }
-            
-            gameState.players[userId].submitted = true;
-            gameState.pairs[pairIndex].votes++;
-            checkAllSubmitted();
-        };
-
-        const checkAllSubmitted = () => {
-            const playerIds = Object.keys(gameState.players);
-            playerIds.forEach((pid, index) => {
-                const p = gameState.players[pid];
-                if (pid.startsWith('bot') && !p.submitted) {
-                    p.submitted = true;
-                    if(gameState.status === 'asking') p.originalQuestion = `P${index + 1} Autoral`;
-                    if(gameState.status === 'answering') p.writtenAnswer = `R${index + 1}`;
-                    if(gameState.status === 'voting') {
-                        const validPairs = gameState.pairs.filter(pair => pair.answererId !== pid);
-                        if (validPairs.length > 0) validPairs[Math.floor(Math.random() * validPairs.length)].votes++;
-                    }
-                }
-            });
-            
-            const allDone = Object.values(gameState.players).every(p => p.submitted);
-            
-            if (allDone) {
-                showNotification("Todos responderam! Avançando...");
-                setTimeout(advanceState, 1500);
-            } else {
-                render();
-            }
-        };
-        
-        const advanceState = () => {
-            Object.values(gameState.players).forEach(p => p.submitted = false);
-            
-            if(gameState.status === 'asking') {
-                const playerIds = Object.keys(gameState.players);
-                let questionerIds = [...playerIds].sort(() => 0.5 - Math.random());
-                playerIds.forEach((pid, i) => {
-                    let qid = questionerIds[i];
-                    if(pid === qid) { qid = questionerIds[(i + 1) % playerIds.length]; }
-                    const authorIndex = playerIds.findIndex(id => id === qid);
-                    gameState.players[pid].assignedQuestion = {
-                        text: gameState.players[qid].originalQuestion,
-                        authorId: qid,
-                        authorIndex: authorIndex
-                    };
-                });
-                gameState.status = 'answering';
-
-            } else if (gameState.status === 'answering') {
-                 gameState.pairs = [];
-                 const playerIds = Object.keys(gameState.players);
-                 const answererIds = [...playerIds.slice(1), playerIds[0]];
-                 
-                 playerIds.forEach((pid, i) => {
-                     const question = gameState.players[pid].assignedQuestion.text; // P(i) Recebida
-                     const originalQuestionAuthorId = gameState.players[pid].assignedQuestion.authorId;
-                     
-                     const answererId = answererIds[i]; // R(i+1)
-                     const answer = gameState.players[answererId].writtenAnswer;
-
-                     gameState.pairs.push({ question, answer, questionerId: originalQuestionAuthorId, answererId, votes: 0, comments: [] });
-                 });
-                gameState.status = 'voting';
-
-            } else if (gameState.status === 'voting') {
-                const winner = gameState.pairs.reduce((a, b) => a.votes > b.votes ? a : b, {votes: -1});
-                if(winner.questionerId) gameState.players[winner.questionerId].score++;
-                if(winner.answererId) gameState.players[winner.answererId].score++;
-                winner.round = gameState.round;
-                gameState.roundWinners.push(winner);
-                gameState.status = 'results';
-            }
-            render();
-        };
-
-        const nextRound = () => {
-            if (gameState.round >= 3) {
-                gameState.status = 'final';
-            } else {
-                gameState.round++;
-                gameState.status = 'asking';
-                Object.values(gameState.players).forEach(p => {
-                    p.submitted = false;
-                    p.originalQuestion = '';
-                    p.assignedQuestion = {};
-                    p.writtenAnswer = '';
-                });
-                gameState.pairs = [];
-            }
-            render();
-        };
-
-        window.shareOnWhatsApp = (text) => {
-            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        };
-
-        // --- Inicialização ---
-        const initialize = () => {
-            if (IS_ONLINE_MODE) {
-                // Online initialization logic would go here
-            } else {
-                 console.warn("MODO DE DEMONSTRAÇÃO ATIVADO.");
-            }
-            document.getElementById('create-game-btn').onclick = createGame;
-            document.getElementById('submit-name-btn').onclick = () => joinGame(document.getElementById('player-name-input').value);
-            document.getElementById('lobby-leave-btn').onclick = () => window.location.reload();
-            document.getElementById('game-leave-btn').onclick = () => window.location.reload();
-            document.getElementById('invite-player-btn').onclick = () => showNotification("Convites online requerem configuração do Firebase.");
-            document.getElementById('invite-visitor-btn').onclick = () => showNotification("Convites online requerem configuração do Firebase.");
-            showScreen('home');
-            lucide.createIcons();
-        };
-
-        initialize();
-    </script>
+    // Eventos iniciais
+    document.getElementById("create-game-btn").addEventListener("click", createGame);
+  </script>
 </body>
 </html>
+
 
