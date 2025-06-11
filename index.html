@@ -6,19 +6,66 @@
   <title>O que você faria se...?</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
+
+body { 
+    font-family: 'Poppins', sans-serif; 
+    background-color: #f0f9ff;
+}
+
+.font-heading { 
+    font-weight: 800; 
+}
+
+.transition-all { 
+    transition: all 0.2s ease-in-out; 
+}
+
+.hidden { 
+    display: none; 
+}
+
+.card {
+    background-color: white;
+    border-radius: 1.25rem; /* 20px */
+    padding: 2rem; /* 32px */
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    border: 1px solid #f3f4f6;
+}
+
+.btn {
+    font-weight: 500;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6">
-    <h1 class="text-2xl font-bold mb-4 text-center">O que você faria se...?</h1>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="card w-full max-w-md">
+    <h1 class="font-heading text-2xl mb-4 text-center">O que você faria se...?</h1>
     <div id="lobby" class="space-y-4">
-      <button id="btnCreate" class="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600">Criar nova partida</button>
-      <input id="inputCode" type="text" placeholder="Código da partida" class="w-full border border-gray-300 rounded-xl p-2" />
-      <button id="btnJoin" class="w-full bg-green-500 text-white py-2 rounded-xl hover:bg-green-600">Entrar na partida</button>
+      <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-4">Criar nova partida</button>
+      <input id="inputCode" type="text" placeholder="Código da partida" class="w-full border border-gray-300 rounded-xl p-2 mb-4" />
+      <button id="btnJoin" class="btn transition-all w-full bg-green-500 text-white">Entrar na partida</button>
     </div>
     <div id="game" class="hidden space-y-4">
       <h2 class="text-xl font-semibold">Partida: <span id="gameId"></span></h2>
       <div id="players" class="space-y-2"></div>
-      <!-- Aqui vai a lógica do jogo -->
     </div>
   </div>
 
@@ -120,4 +167,5 @@
   </script>
 </body>
 </html>
+
 
