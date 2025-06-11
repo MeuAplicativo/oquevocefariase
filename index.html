@@ -10,163 +10,177 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCiMZTl1uk55an3VcoNC2Ts6fADm3PR0Sk",
-            authDomain: "oquevocefariase-7538d.firebaseapp.com",
-            projectId: "oquevocefariase-7538d",
-            storageBucket: "oquevocefariase-7538d.firebasestorage.app",
-            messagingSenderId: "596251526467",
-            appId: "1:596251526467:web:8090330bb6c56a18a15bf6"
-        };
+        window.addEventListener('DOMContentLoaded', () => {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCiMZTl1uk55an3VcoNC2Ts6fADm3PR0Sk",
+                authDomain: "oquevocefariase-7538d.firebaseapp.com",
+                projectId: "oquevocefariase-7538d",
+                storageBucket: "oquevocefariase-7538d.appspot.com",
+                messagingSenderId: "596251526467",
+                appId: "1:596251526467:web:8090330bb6c56a18a15bf6"
+            };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
 
-        let userId = null;
-        let gameId = null;
-        let gameState = {};
+            let userId = null;
+            let gameId = null;
+            let gameState = {};
 
-        const screens = {
-            home: document.getElementById('screen-home'),
-            ad: document.getElementById('screen-ad'),
-            name: document.getElementById('screen-name'),
-            lobby: document.getElementById('screen-lobby'),
-            game: document.getElementById('screen-game'),
-        };
+            const screens = {
+                home: document.getElementById('screen-home'),
+                ad: document.getElementById('screen-ad'),
+                name: document.getElementById('screen-name'),
+                lobby: document.getElementById('screen-lobby'),
+                game: document.getElementById('screen-game'),
+            };
 
-        const showScreen = (screenName) => {
-            Object.values(screens).forEach(s => s.classList.add('hidden'));
-            if(screens[screenName]) screens[screenName].classList.remove('hidden');
-        };
+            const showScreen = (screenName) => {
+                Object.values(screens).forEach(s => s?.classList.add('hidden'));
+                if(screens[screenName]) screens[screenName].classList.remove('hidden');
+            };
 
-        const showNotification = (message) => {
-            const toast = document.getElementById('notification-toast');
-            document.getElementById('notification-message').textContent = message;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        };
+            const showNotification = (message) => {
+                const toast = document.getElementById('notification-toast');
+                document.getElementById('notification-message').textContent = message;
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 3000);
+            };
 
-        const escape = (str) => String(str).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const escape = (str) => String(str).replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        const writeState = async () => {
-            if (!gameId) return;
-            await setDoc(doc(db, "games", gameId), gameState);
-        };
+            const writeState = async () => {
+                if (!gameId) return;
+                await setDoc(doc(db, "games", gameId), gameState);
+            };
 
-        const listenToGame = () => {
-            onSnapshot(doc(db, "games", gameId), (docSnap) => {
-                if (docSnap.exists()) {
-                    gameState = docSnap.data();
-                    renderLobby();
-                }
-            });
-        };
+            const listenToGame = () => {
+                onSnapshot(doc(db, "games", gameId), (docSnap) => {
+                    if (docSnap.exists()) {
+                        gameState = docSnap.data();
+                        renderLobby();
+                    }
+                });
+            };
 
-        const createGame = () => {
-            showScreen('ad');
-            let timer = 3;
-            const timerSpan = document.getElementById('ad-timer');
-            timerSpan.textContent = timer;
-            const interval = setInterval(() => {
-                timer--;
+            const createGame = () => {
+                showScreen('ad');
+                let timer = 3;
+                const timerSpan = document.getElementById('ad-timer');
+                if (!timerSpan) return;
                 timerSpan.textContent = timer;
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    showScreen('name');
-                }
-            }, 1000);
-        };
+                const interval = setInterval(() => {
+                    timer--;
+                    timerSpan.textContent = timer;
+                    if (timer <= 0) {
+                        clearInterval(interval);
+                        showScreen('name');
+                    }
+                }, 1000);
+            };
 
-        const joinGame = async (name) => {
-            if (!name) {
-                showNotification("Por favor, digite um nome.");
-                return;
-            }
-            userId = 'user_' + Math.random().toString(36).substr(2, 9);
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const existingGameId = urlParams.get('game');
-
-            if (existingGameId) {
-                gameId = existingGameId;
-                const docSnap = await getDoc(doc(db, "games", gameId));
-                if (docSnap.exists()) {
-                    gameState = docSnap.data();
-                    addPlayer(false, userId, name);
-                    await writeState();
-                    listenToGame();
-                    showScreen('lobby');
-                    return;
-                } else {
-                    showNotification("Partida não encontrada.");
+            const joinGame = async (name) => {
+                if (!name) {
+                    showNotification("Por favor, digite um nome.");
                     return;
                 }
-            }
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
 
-            const newGameDoc = await addDoc(collection(db, "games"), {});
-            gameId = newGameDoc.id;
-            gameState = {
-                status: 'lobby',
-                hostId: userId,
-                round: 0,
-                players: {},
-                roundWinners: []
+                const urlParams = new URLSearchParams(window.location.search);
+                const existingGameId = urlParams.get('game');
+
+                if (existingGameId) {
+                    gameId = existingGameId;
+                    const docSnap = await getDoc(doc(db, "games", gameId));
+                    if (docSnap.exists()) {
+                        gameState = docSnap.data();
+                        addPlayer(false, userId, name);
+                        await writeState();
+                        listenToGame();
+                        showScreen('lobby');
+                        return;
+                    } else {
+                        showNotification("Partida não encontrada.");
+                        return;
+                    }
+                }
+
+                const newGameDoc = await addDoc(collection(db, "games"), {});
+                gameId = newGameDoc.id;
+                gameState = {
+                    status: 'lobby',
+                    hostId: userId,
+                    round: 0,
+                    players: {},
+                    roundWinners: []
+                };
+                addPlayer(false, userId, name);
+                await writeState();
+                listenToGame();
+                showScreen('lobby');
+                const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
+                console.log("Compartilhe esse link com os amigos:", shareUrl);
             };
-            addPlayer(false, userId, name);
-            await writeState();
-            listenToGame();
-            showScreen('lobby');
-            const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
-            console.log("Compartilhe esse link com os amigos:", shareUrl);
-        };
 
-        const addPlayer = (isBot, id = null, name = null) => {
-            const playerCount = Object.keys(gameState.players).length;
-            if(playerCount >= 8) {
-                showNotification("Lobby está cheio!");
-                return;
-            }
-            const newId = id || (isBot ? `bot_${playerCount}` : `user_${playerCount}`);
-            const newName = name || (isBot ? `Simulado ${playerCount+1}` : `Jogador ${playerCount+1}`);
-            const avatars = ['🥳', '👽', '👻', '🤖', '🐶', '🎩', '🦸', '🤵'];
+            const addPlayer = (isBot, id = null, name = null) => {
+                const playerCount = Object.keys(gameState.players).length;
+                if(playerCount >= 8) {
+                    showNotification("Lobby está cheio!");
+                    return;
+                }
+                const newId = id || (isBot ? `bot_${playerCount}` : `user_${playerCount}`);
+                const newName = name || (isBot ? `Simulado ${playerCount+1}` : `Jogador ${playerCount+1}`);
+                const avatars = ['🥳', '👽', '👻', '🤖', '🐶', '🎩', '🦸', '🤵'];
 
-            gameState.players[newId] = {
-                name: newName,
-                avatar: isBot ? '🤖' : avatars[playerCount % avatars.length],
-                score: 0,
-                submitted: false,
-                originalQuestion: '',
-                assignedQuestion: {},
-                writtenAnswer: ''
+                gameState.players[newId] = {
+                    name: newName,
+                    avatar: isBot ? '🤖' : avatars[playerCount % avatars.length],
+                    score: 0,
+                    submitted: false,
+                    originalQuestion: '',
+                    assignedQuestion: {},
+                    writtenAnswer: ''
+                };
             };
-        };
 
-        const renderLobby = () => {
-            document.getElementById('player-count').textContent = Object.keys(gameState.players).length;
-            const playerList = document.getElementById('player-list');
-            playerList.innerHTML = '';
-            Object.entries(gameState.players).forEach(([pid, p]) => {
-                const isHost = pid === gameState.hostId;
-                playerList.innerHTML += `<li class="flex items-center justify-between p-3 rounded-lg">
-                                            <span class="font-medium">${p.avatar} ${escape(p.name)} ${isHost ? ' (Host) 👑' : ''}</span>
-                                         </li>`;
-            });
-            lucide.createIcons();
-            showScreen('lobby');
-        };
+            const renderLobby = () => {
+                const count = document.getElementById('player-count');
+                const playerList = document.getElementById('player-list');
+                if (!count || !playerList) return;
 
-        const initialize = () => {
-            document.getElementById('create-game-btn').onclick = createGame;
-            document.getElementById('submit-name-btn').onclick = () => joinGame(document.getElementById('player-name-input').value);
-            document.getElementById('lobby-leave-btn').onclick = () => window.location.reload();
-            document.getElementById('game-leave-btn').onclick = () => window.location.reload();
-            document.getElementById('invite-player-btn').onclick = () => showNotification("Convites online requerem configuração do Firebase.");
-            document.getElementById('invite-visitor-btn').onclick = () => showNotification("Convites online requerem configuração do Firebase.");
-            showScreen('home');
-            lucide.createIcons();
-        };
+                count.textContent = Object.keys(gameState.players).length;
+                playerList.innerHTML = '';
+                Object.entries(gameState.players).forEach(([pid, p]) => {
+                    const isHost = pid === gameState.hostId;
+                    playerList.innerHTML += `<li class="flex items-center justify-between p-3 rounded-lg">
+                                                <span class="font-medium">${p.avatar} ${escape(p.name)} ${isHost ? ' (Host) 👑' : ''}</span>
+                                             </li>`;
+                });
+                lucide.createIcons();
+                showScreen('lobby');
+            };
 
-        initialize();
+            const initialize = () => {
+                const btnCreate = document.getElementById('create-game-btn');
+                const btnSubmit = document.getElementById('submit-name-btn');
+                const btnLeaveLobby = document.getElementById('lobby-leave-btn');
+                const btnLeaveGame = document.getElementById('game-leave-btn');
+                const btnInvitePlayer = document.getElementById('invite-player-btn');
+                const btnInviteVisitor = document.getElementById('invite-visitor-btn');
+
+                if (btnCreate) btnCreate.addEventListener('click', createGame);
+                if (btnSubmit) btnSubmit.addEventListener('click', () => joinGame(document.getElementById('player-name-input')?.value));
+                if (btnLeaveLobby) btnLeaveLobby.addEventListener('click', () => window.location.reload());
+                if (btnLeaveGame) btnLeaveGame.addEventListener('click', () => window.location.reload());
+                if (btnInvitePlayer) btnInvitePlayer.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
+                if (btnInviteVisitor) btnInviteVisitor.addEventListener('click', () => showNotification("Convites online requerem configuração do Firebase."));
+
+                showScreen('home');
+                lucide.createIcons();
+            };
+
+            initialize();
+        });
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
@@ -190,7 +204,3 @@
     <!-- O restante do HTML permanece igual -->
 </body>
 </html>
-
-
-
-
