@@ -98,6 +98,7 @@
             addPlayer(false, userId, name);
             writeState();
             listenToGame();
+            showScreen('lobby'); // <- linha adicionada
         };
 
         const addPlayer = (isBot, id = null, name = null) => {
