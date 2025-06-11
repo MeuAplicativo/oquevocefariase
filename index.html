@@ -7,56 +7,39 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
-
-body { 
-    font-family: 'Poppins', sans-serif; 
-    background-color: #f0f9ff;
-}
-
-.font-heading { 
-    font-weight: 800; 
-}
-
-.transition-all { 
-    transition: all 0.2s ease-in-out; 
-}
-
-.hidden { 
-    display: none; 
-}
-
-.card {
-    background-color: white;
-    border-radius: 1.25rem; /* 20px */
-    padding: 2rem; /* 32px */
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-    border: 1px solid #f3f4f6;
-}
-
-.btn {
-    font-weight: 500;
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
-    border-radius: 0.75rem;
-    transition: all 0.2s ease-in-out;
-    border: none;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-}
-
-.btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-}
-
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
+    body { font-family: 'Poppins', sans-serif; background-color: #f0f9ff; }
+    .font-heading { font-weight: 800; }
+    .transition-all { transition: all 0.2s ease-in-out; }
+    .hidden { display: none; }
+    .card {
+        background-color: white;
+        border-radius: 1.25rem; /* 20px */
+        padding: 2rem; /* 32px */
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+        border: 1px solid #f3f4f6;
+    }
+    .btn {
+        font-weight: 500;
+        padding-top: 0.85rem;
+        padding-bottom: 0.85rem;
+        border-radius: 0.75rem;
+        transition: all 0.2s ease-in-out;
+        border: none;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+    .btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen">
-  <div class="card w-full max-w-md">
+  <div class="card w-full max-w-md mx-auto mt-10">
     <h1 class="font-heading text-2xl mb-4 text-center">O que você faria se...?</h1>
     <div id="lobby" class="space-y-4">
       <button id="btnCreate" class="btn transition-all w-full bg-blue-500 text-white mb-4">Criar nova partida</button>
@@ -69,27 +52,49 @@ body {
     </div>
   </div>
 
-  <!-- Firebase SDKs -->
   <script type="module">
-    // Import Firebase
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-app.js';
-    import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc } from 'https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-    // Sua configuração do Firebase
+    // Configuração do Firebase
     const firebaseConfig = {
-      apiKey: "SEU_API_KEY",
-      authDomain: "SEU_AUTH_DOMAIN",
-      projectId: "SEU_PROJECT_ID",
-      storageBucket: "SEU_STORAGE_BUCKET",
-      messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-      appId: "SEU_APP_ID"
+      apiKey: "AIzaSyCiMZTl1uk55an3VcoNC2Ts6fADm3PR0Sk",
+      authDomain: "oquevocefariase-7538d.firebaseapp.com",
+      projectId: "oquevocefariase-7538d",
+      storageBucket: "oquevocefariase-7538d.appspot.com",
+      messagingSenderId: "596251526467",
+      appId: "1:596251526467:web:8090330bb6c56a18a15bf6"
     };
 
-    // Inicializa o App
+    // Inicializa Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
 
-    // Elementos do DOM
+    // Login anônimo obrigatório para autenticar
+    signInAnonymously(auth).catch(console.error);
+
+    let currentGameId;
+    let playerName = '';
+
+    // Função para pedir nome ao usuário
+    async function askPlayerName() {
+      let name = '';
+      while (!name) {
+        name = prompt('Digite seu nome para entrar na partida:');
+        if (name) name = name.trim();
+      }
+      playerName = name;
+      return name;
+    }
+
+    // Gerar ID simples
+    function generateGameId() {
+      return Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+
+    // DOM elements
     const btnCreate = document.getElementById('btnCreate');
     const btnJoin = document.getElementById('btnJoin');
     const inputCode = document.getElementById('inputCode');
@@ -98,43 +103,15 @@ body {
     const gameIdSpan = document.getElementById('gameId');
     const playersDiv = document.getElementById('players');
 
-    let currentGameId;
-
-    // Gerar ID simples (você pode melhorar)
-    function generateGameId() {
-      return Math.random().toString(36).substr(2, 6).toUpperCase();
+    // Função para entrar/mostrar partida
+    function enterGame(id) {
+      currentGameId = id;
+      gameIdSpan.textContent = id;
+      lobby.classList.add('hidden');
+      gameDiv.classList.remove('hidden');
     }
 
-    // Criar nova partida
-    btnCreate.addEventListener('click', async () => {
-      const id = generateGameId();
-      const gameRef = doc(db, 'partidas', id);
-      await setDoc(gameRef, { players: [], createdAt: Date.now() });
-      startListening(id);
-      enterGame(id);
-    });
-
-    // Entrar em uma partida existente
-    btnJoin.addEventListener('click', async () => {
-      const id = inputCode.value.trim().toUpperCase();
-      if (!id) return alert('Informe o código da partida');
-      const gameRef = doc(db, 'partidas', id);
-      const snap = await getDoc(gameRef);
-      if (!snap.exists()) return alert('Partida não encontrada');
-      startListening(id);
-      enterGame(id);
-    });
-
-    // Começa escutando alterações na partida
-    function startListening(id) {
-      const gameRef = doc(db, 'partidas', id);
-      onSnapshot(gameRef, (snap) => {
-        const data = snap.data();
-        renderPlayers(data.players || []);
-      });
-    }
-
-    // Renderizar lista de jogadores
+    // Atualizar lista de jogadores
     function renderPlayers(players) {
       playersDiv.innerHTML = '';
       players.forEach((p, i) => {
@@ -145,27 +122,65 @@ body {
       });
     }
 
-    // Mostrar a área de jogo
-    function enterGame(id) {
-      currentGameId = id;
-      gameIdSpan.textContent = id;
-      lobby.classList.add('hidden');
-      gameDiv.classList.remove('hidden');
+    // Escutar mudanças na partida
+    function startListening(id) {
+      const gameRef = doc(db, 'partidas', id);
+      onSnapshot(gameRef, (snap) => {
+        const data = snap.data();
+        renderPlayers(data.players || []);
+      });
     }
 
-    // Exemplo: adicionar jogador quando clicar no nome (substitua por input real)
-    playersDiv.addEventListener('click', async () => {
-      const name = prompt('Digite seu nome');
-      if (!name) return;
-      const gameRef = doc(db, 'partidas', currentGameId);
+    // Criar nova partida
+    btnCreate.addEventListener('click', async () => {
+      const name = await askPlayerName();
+      const id = generateGameId();
+      const gameRef = doc(db, 'partidas', id);
+      await setDoc(gameRef, { players: [name], createdAt: Date.now() });
+      startListening(id);
+      enterGame(id);
+    });
+
+    // Entrar em uma partida existente
+    btnJoin.addEventListener('click', async () => {
+      const id = inputCode.value.trim().toUpperCase();
+      if (!id) return alert('Informe o código da partida');
+      const name = await askPlayerName();
+      const gameRef = doc(db, 'partidas', id);
       const snap = await getDoc(gameRef);
-      const players = snap.data().players || [];
-      if (players.includes(name)) return alert('Você já entrou');
+      if (!snap.exists()) return alert('Partida não encontrada');
+
+      let players = snap.data().players || [];
+      if (players.includes(name)) {
+        alert('Este nome já está na lista de jogadores. Escolha outro!');
+        return;
+      }
       players.push(name);
       await setDoc(gameRef, { players }, { merge: true });
+
+      startListening(id);
+      enterGame(id);
+    });
+
+    // Só renderiza se usuário autenticado (boa prática)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log('Usuário autenticado:', user.uid);
+        // Remove popup de conexão se já existe
+        const msg = document.getElementById('firebase-status');
+        if (msg) msg.remove();
+        // Mostra popup de status só por 2s
+        const el = document.createElement('div');
+        el.id = 'firebase-status';
+        el.style = 'position:fixed;bottom:12px;right:12px;background:#def;padding:8px 16px;border-radius:12px;';
+        el.innerText = 'Firebase conectado e autenticado!';
+        document.body.appendChild(el);
+        setTimeout(() => { el.remove(); }, 2000);
+      }
     });
   </script>
 </body>
 </html>
+
 
 
